@@ -1,0 +1,7 @@
+slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,socket,cores,threads,base_clock_ghz,boost_clock_ghz,tdp_w,integrated_graphics,memory_types,includes_cooler
+amd-ryzen-5-5500,low,AMD,Ryzen 5 5500 (Tray),48,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",88,2022,AM4,6,12,3.6,4.2,65,false,DDR4,false
+intel-core-i3-12100f,low,Intel,Core i3-12100F (Tray),50,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",89,2022,LGA1700,4,8,3.3,4.3,58,false,DDR4|DDR5,false
+amd-ryzen-5-7600,mid,AMD,Ryzen 5 7600 (Tray),72,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",88,2023,AM5,6,12,3.8,5.1,65,true,DDR5,false
+intel-core-i5-14400f,mid,Intel,Core i5-14400F (Tray),68,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",148,2024,LGA1700,10,16,2.5,4.7,65,false,DDR4|DDR5,false
+amd-ryzen-7-9800x3d,high,AMD,Ryzen 7 9800X3D (Tray),100,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",162,2024,AM5,8,16,4.7,5.2,120,true,DDR5,false
+intel-core-ultra-7-265k,high,Intel,Core Ultra 7 265K (Tray),80,"estimate: relative gaming performance, Ryzen 7 9800X3D = 100",250,2024,LGA1851,20,20,3.9,5.5,125,true,DDR5,false
