@@ -1,0 +1,7 @@
+slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,memory_type,capacity_gb,modules,speed_mts,cas_latency
+kingston-kf432c16bbk2-16,low,Kingston,FURY Beast KF432C16BBK2/16 (2x8GB DDR4-3200 CL16),,,6,,DDR4,16,2,3200,16
+kingston-kf556c36bbek2-16,low,Kingston,FURY Beast KF556C36BBEK2-16 (2x8GB DDR5-5600 CL36),,,8,,DDR5,16,2,5600,36
+kingston-kf432c16bb1k2-32,mid,Kingston,FURY Beast KF432C16BB1K2/32 (2x16GB DDR4-3200 CL16),,,8,,DDR4,32,2,3200,16
+kingston-kf560c36bbe2ak2-32,mid,Kingston,FURY Beast RGB KF560C36BBE2AK2-32 (2x16GB DDR5-6000 CL36),,,10,,DDR5,32,2,6000,36
+kingston-kf568c34bbeak2-32,high,Kingston,FURY Beast RGB KF568C34BBEAK2-32 (2x16GB DDR5-6800 CL34),,,10,,DDR5,32,2,6800,34
+kingston-kf560c30bbeak2-64,high,Kingston,FURY Beast RGB KF560C30BBEAK2-64 (2x32GB DDR5-6000 CL30),,,12,,DDR5,64,2,6000,30

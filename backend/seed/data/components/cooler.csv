@@ -1,0 +1,7 @@
+slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,cooler_type,supported_sockets,height_mm,radiator_mm,max_tdp_w
+deepcool-ag400-led,low,DeepCool,AG400 LED,,,3,2022,air,AM4|AM5|LGA1700|LGA1851,150,,220
+deepcool-ag620-bk-argb-v2,low,DeepCool,AG620 BK ARGB V2,,,5,2025,air,AM4|AM5|LGA1700|LGA1851,161,,260
+deepcool-ak500s-digital-se,mid,DeepCool,AK500S Digital SE,,,4,2024,air,AM4|AM5|LGA1700|LGA1851,160,,240
+deepcool-ak620-digital,mid,DeepCool,AK620 Digital,,,6,2023,air,AM4|AM5|LGA1700|LGA1851,162,,260
+deepcool-le360-pro-black,high,DeepCool,LE360 PRO Black,,,12,2025,aio,AM4|AM5|LGA1700|LGA1851,,360,300
+arctic-liquid-freezer-iii-pro-360,high,ARCTIC,Liquid Freezer III Pro 360,,,12,2025,aio,AM4|AM5|LGA1700|LGA1851,,360,300

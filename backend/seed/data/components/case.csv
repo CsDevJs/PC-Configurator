@@ -1,0 +1,7 @@
+slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,supported_board_form_factors,max_gpu_length_mm,max_cooler_height_mm,max_radiator_mm,psu_form_factor,included_fans
+deepcool-cc560-v2-black,low,DeepCool,CC560 V2 Black,,,12,2024,ATX|Micro-ATX|Mini-ITX,370,163,360,ATX,4
+deepcool-ch360-white,low,DeepCool,CH360 White,,,9,2023,Micro-ATX|Mini-ITX,320,165,360,ATX,3
+deepcool-ch560-black,mid,DeepCool,CH560 Black,,,12,2023,E-ATX|ATX|Micro-ATX|Mini-ITX,380,170,360,ATX,4
+be-quiet-pure-base-501-lx-white,mid,be quiet!,Pure Base 501 LX White,,,12,2025,ATX|Micro-ATX|Mini-ITX,368,178,360,ATX,4
+be-quiet-light-base-600-lx-white,high,be quiet!,Light Base 600 LX White,,,12,2024,E-ATX|ATX|Micro-ATX|Mini-ITX,400,170,360,ATX,4
+be-quiet-shadow-base-800-fx-white,high,be quiet!,Shadow Base 800 FX White,,,12,2024,E-ATX|ATX|Micro-ATX|Mini-ITX,430,165,420,ATX,4

@@ -1,0 +1,7 @@
+slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,wattage,efficiency,modular,form_factor,has_16pin
+be-quiet-system-power-11-650w,low,be quiet!,System Power 11 650W (BP011EU),,,0,2024,650,80+ Bronze,none,ATX,false
+cougar-atlas-750,low,Cougar,Atlas 750,,,0,,750,80+ Bronze,none,ATX,false
+cougar-gex-pro-750,mid,Cougar,GEX PRO 750,,,0,,750,80+ Gold,full,ATX,false
+cougar-gex-pro-850,mid,Cougar,GEX PRO 850,,,0,,850,80+ Gold,full,ATX,false
+asus-rog-strix-850w-platinum,high,ASUS,ROG Strix 850W Platinum,,,0,2024,850,80+ Platinum,full,ATX,true
+be-quiet-pure-power-13-m-1000w,high,be quiet!,Pure Power 13 M 1000W (BP028EU),,,0,2024,1000,80+ Gold,full,ATX,true
