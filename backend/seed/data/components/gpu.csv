@@ -1,7 +1,0 @@
-slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,chipset,vram_gb,length_mm,slot_width,tdp_w,recommended_psu_w,power_connectors
-gigabyte-rtx-5050-windforce-oc-8g,low,Gigabyte,GeForce RTX 5050 WINDFORCE OC 8G (GV-N5050WF2OC-8GD),25,"estimate: relative 1440p raster performance, RTX 5090 = 100",130,2025,GeForce RTX 5050,8,199,2.0,130,550,1x 8-pin
-gigabyte-rx-9060-xt-gaming-oc-8g,low,Gigabyte,Radeon RX 9060 XT GAMING OC 8G (GV-R9060XTGAMING OC-8GD),35,"estimate: relative 1440p raster performance, RTX 5090 = 100",150,2025,Radeon RX 9060 XT,8,281,2.0,150,450,1x 8-pin
-asus-dual-rtx-5060-ti-o16g,mid,ASUS,Dual GeForce RTX 5060 Ti OC Edition 16GB (DUAL-RTX5060TI-O16G),38,"estimate: relative 1440p raster performance, RTX 5090 = 100",180,2025,GeForce RTX 5060 Ti,16,229,2.5,180,550,1x 8-pin
-gigabyte-rx-9060-xt-gaming-oc-16g,mid,Gigabyte,Radeon RX 9060 XT GAMING OC 16G (GV-R9060XTGAMING OC-16GD),37,"estimate: relative 1440p raster performance, RTX 5090 = 100",160,2025,Radeon RX 9060 XT,16,281,2.0,160,450,1x 8-pin
-gigabyte-rtx-5070-ti-windforce-oc-16g,high,Gigabyte,GeForce RTX 5070 Ti WINDFORCE OC 16G (GV-N507TWF3OC-16GD),60,"estimate: relative 1440p raster performance, RTX 5090 = 100",300,2025,GeForce RTX 5070 Ti,16,304,2.5,300,750,1x 16-pin
-gigabyte-rx-9070-xt-gaming-oc-16g,high,Gigabyte,Radeon RX 9070 XT GAMING OC 16G (GV-R9070XTGAMING OC-16GD),60,"estimate: relative 1440p raster performance, RTX 5090 = 100",340,2025,Radeon RX 9070 XT,16,288,3.0,340,750,3x 8-pin

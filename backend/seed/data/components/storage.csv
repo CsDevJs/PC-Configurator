@@ -1,7 +1,0 @@
-slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,storage_type,interface,form_factor,capacity_gb,read_mbps,write_mbps
-kingston-a400-480gb,low,Kingston,A400 480GB (SA400S37/480G),,,3,2017,sata_ssd,SATA III,2.5,480,500,450
-kingston-nv3-1tb,low,Kingston,NV3 1TB (SNV3S/1000G),,,6,2024,nvme,PCIe 4.0 x4,M.2 2280,1000,6000,4000
-samsung-990-evo-plus-1tb,mid,Samsung,990 EVO Plus 1TB (MZ-V9S1T0BW),,,6,2024,nvme,PCIe 4.0 x4,M.2 2280,1000,7150,6300
-kingston-nv3-2tb,mid,Kingston,NV3 2TB (SNV3S/2000G),,,6,2024,nvme,PCIe 4.0 x4,M.2 2280,2000,6000,5000
-samsung-990-pro-2tb,high,Samsung,990 PRO 2TB (MZ-V9P2T0BW),,,8,2022,nvme,PCIe 4.0 x4,M.2 2280,2000,7450,6900
-samsung-990-pro-4tb,high,Samsung,990 PRO 4TB (MZ-V9P4T0BW),,,8,2023,nvme,PCIe 4.0 x4,M.2 2280,4000,7450,6900

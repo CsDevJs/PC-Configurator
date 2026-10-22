@@ -45,14 +45,17 @@ The fields used by compatibility checks:
 
 ## Seed data
 
-All data lives in `seed/data/` as CSV, so the team can edit it in a spreadsheet:
+All catalog data is in one SQL file, `seed/seed.sql`, grouped by section: stores,
+then each category (its `components` rows followed by its spec rows), then
+store offers. Rows reference each other by `slug`, never by numeric id.
 
-- `stores.csv`
-- `components/<category>.csv`: common columns plus that category's spec columns.
-  Array columns use `|` as a separator (e.g. `DDR4|DDR5`).
-- `offers.csv`: one row per (component, store) with `price_mdl`, `availability`, `url`, `checked_on`.
+Load it in either of two ways (after `alembic upgrade head`):
 
-`scripts/seed.py` upserts by slug, so after editing a CSV just run it again.
+- `python -m scripts.seed` from `backend/`, or
+- open `seed/seed.sql` in pgAdmin's Query Tool, connected to `pc_configurator`, and press F5.
+
+Every `INSERT` ends in `ON CONFLICT … DO UPDATE`, so the file is safe to re-run.
+To change a price or add a part, edit `seed.sql` and run it again.
 
 ### Where the data came from (2026-10-21)
 

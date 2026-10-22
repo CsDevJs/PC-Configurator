@@ -1,7 +1,0 @@
-slug,tier,brand,model,perf_score,perf_source,power_draw_w,release_year,socket,chipset,form_factor,memory_type,memory_slots,max_memory_gb,m2_slots,sata_ports,wifi
-gigabyte-b550m-ds3h-r2,low,Gigabyte,B550M DS3H R2,,,40,2024,AM4,B550,Micro-ATX,DDR4,4,128,2,4,false
-gigabyte-b760m-h-ddr4,low,Gigabyte,B760M H DDR4,,,40,2023,LGA1700,B760,Micro-ATX,DDR4,2,64,2,4,false
-gigabyte-b650m-d3hp,mid,Gigabyte,B650M D3HP,,,45,2023,AM5,B650,Micro-ATX,DDR5,4,192,2,4,false
-asus-tuf-gaming-b760-plus-wifi,mid,ASUS,TUF GAMING B760-PLUS WIFI,,,50,2023,LGA1700,B760,ATX,DDR5,4,192,3,4,true
-gigabyte-x870e-aorus-elite-wifi7,high,Gigabyte,X870E AORUS ELITE WIFI7,,,60,2024,AM5,X870E,ATX,DDR5,4,256,4,4,true
-asus-tuf-gaming-z890-plus-wifi,high,ASUS,TUF GAMING Z890-PLUS WIFI,,,60,2024,LGA1851,Z890,ATX,DDR5,4,192,4,4,true
