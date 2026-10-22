@@ -50,7 +50,7 @@ def test_openapi_documents_all_spec_shapes(client):
     schema = response.json()
     assert set(schema["paths"]) == {
         "/health", "/health/db", "/components", "/components/{component_id}", "/stores",
-        "/compatibility/check",
+        "/compatibility/check", "/compatibility/filter",
     }
     assert "CpuSpecRead" in schema["components"]["schemas"]
     assert "CoolerSpecRead" in schema["components"]["schemas"]

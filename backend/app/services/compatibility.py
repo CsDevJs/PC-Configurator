@@ -197,7 +197,7 @@ def check_pair(left: SelectedPart, right: SelectedPart) -> tuple[list[str], list
     """Evaluate binary constraints without I/O, suitable for later AC-3 filtering.
 
     The final bool indicates missing data: such a pair must not be pruned as if
-    it were a proven conflict. AC-3 is not implemented in this milestone.
+    it were a proven conflict. The AC-3 service uses these binary checks.
     """
     report = _pair_report({left.component.category: left, right.component.category: right})
     report.unknown |= left.spec is None or right.spec is None

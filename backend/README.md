@@ -147,8 +147,8 @@ Radiator fit also depends on dimensions and mounting arrangements; see
 Rule code lives in `app/services/compatibility.py`, independently of HTTP/database
 access. Binary rules are available through `check_pair` for later AC-3 reuse;
 build completeness and total power are checked separately by `check_build`.
-AC-3 domain filtering, recommendation generation, Min-Cost Max-Flow, and TOPSIS
-are future milestones; this endpoint checks a user's existing selection.
+Recommendation generation, Min-Cost Max-Flow, and TOPSIS are future milestones.
+The check endpoint validates an existing selection; AC-3 filtering is described below.
 
 ## Tests
 
@@ -223,3 +223,25 @@ To change a price or add a part, edit `seed.sql` and run it again.
   where the store was clearly wrong.
 - **`perf_score` values are rough estimates** (`perf_source` says so), only for
   CPUs and GPUs. Replace them with sourced benchmark numbers before the evaluation chapter.
+
+## AC-3 candidate filtering
+
+`POST /compatibility/filter` accepts `{"components": {"cpu": 1}}`, using actual
+catalog IDs, or `{}` to start without selections. Selected categories become
+singleton domains; all other categories start with their catalog candidates.
+The endpoint reuses pairwise compatibility rules and repeatedly removes candidates
+that have no supporting choice in another domain, until no domain changes.
+Missing specifications and advisory warnings do not by themselves remove a choice.
+
+The response contains `domains` (remaining IDs per category), `removed` (IDs
+pruned from the initial domains), `empty_categories`, and `status`:
+`arc_consistent` or `inconsistent`. Selected IDs can be removed if they have no
+support, yielding an inconsistent result; the request itself is never modified.
+GPU and cooler domains may include JSON `null`, representing no separate part.
+These choices are removed for CPUs without integrated graphics or a bundled cooler.
+Other categories are required. All catalog offers are considered regardless of
+stock; price, budget, and total system power are outside this binary filtering step.
+
+Nonempty domains do not guarantee a global solution. Run `/compatibility/check`
+on a final selection to check total power and completeness. Remove `null` choices
+from the selection before calling that endpoint. No data is saved by filtering.

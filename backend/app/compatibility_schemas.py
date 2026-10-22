@@ -35,3 +35,18 @@ class CompatibilityResult(BaseModel):
     estimated_power_w: int
     recommended_psu_w: int
     limitations: list[str]
+
+
+class FilterRequest(CompatibilityRequest):
+    components: dict[Category, Annotated[int, Field(strict=True, gt=0)]] = Field(
+        default_factory=dict, max_length=8,
+        description="Fixed selections; omit to filter the whole catalog.",
+    )
+
+
+class FilterResult(BaseModel):
+    status: Literal["arc_consistent", "inconsistent"]
+    domains: dict[Category, list[int | None]]
+    removed: dict[Category, list[int]]
+    empty_categories: list[Category]
+    limitations: list[str]

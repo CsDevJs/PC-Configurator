@@ -1,5 +1,10 @@
 from typing import Annotated
 
+from app.compatibility_schemas import FilterRequest, FilterResult
+from app.db.models import Category
+from app.services.ac3 import filter_domains
+from app.services.compatibility import LIMITATIONS
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -38,3 +43,44 @@ def check_compatibility(payload: CompatibilityRequest, db: Annotated[Session, De
         for category, component_id in payload.components.items()
     }
     return check_build(parts)
+
+
+@router.post("/compatibility/filter", response_model=FilterResult)
+def filter_compatibility(payload: FilterRequest, db: Annotated[Session, Depends(get_db)]):
+    catalog = list(db.scalars(select(Component).order_by(Component.id)))
+    by_id = {part.id: part for part in catalog}
+    missing = sorted(set(payload.components.values()) - by_id.keys())
+    if missing:
+        raise HTTPException(404, detail={"message": "Components not found", "component_ids": missing})
+    mismatches = [
+        {"component_id": component_id, "expected": category.value,
+         "actual": by_id[component_id].category.value}
+        for category, component_id in payload.components.items()
+        if by_id[component_id].category != category
+    ]
+    if mismatches:
+        raise HTTPException(422, detail={"message": "Component category mismatch", "mismatches": mismatches})
+    domains = {}
+    for category, model in SPEC_MODELS.items():
+        specs = {spec.component_id: spec for spec in db.scalars(select(model))}
+        domains[category] = [SelectedPart(part, specs.get(part.id)) for part in catalog
+                             if part.category == category and
+                             (category not in payload.components or part.id == payload.components[category])]
+        if category in (Category.GPU, Category.COOLER) and category not in payload.components:
+            domains[category].append(None)
+    filtered = filter_domains(domains)
+    ids = {category: [None if part is None else part.component.id for part in values]
+           for category, values in filtered.items()}
+    empty = [category for category, values in ids.items() if not values]
+    return FilterResult(
+        status="inconsistent" if empty else "arc_consistent", domains=ids,
+        removed={category: [part.component.id for part in values
+                           if part is not None and part.component.id not in ids[category]]
+                 for category, values in domains.items()},
+        empty_categories=empty,
+        limitations=LIMITATIONS + [
+            "Arc consistency is not proof of a complete valid build. Run /compatibility/check on final selections.",
+            "Budget, stock, and total PSU demand are not AC-3 binary constraints.",
+            "Null in a GPU or cooler domain means no separate component; CPU capabilities constrain this choice.",
+        ],
+    )
