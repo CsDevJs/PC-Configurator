@@ -260,17 +260,26 @@ class Offer(Base):
         UniqueConstraint("component_id", "store_id"),
         CheckConstraint("price_mdl > 0", name="price_positive"),
         CheckConstraint("stock_qty IS NULL OR stock_qty >= 0", name="stock_nonneg"),
+        CheckConstraint("regular_price_mdl IS NULL OR regular_price_mdl > price_mdl", name="regular_above_price"),
+        CheckConstraint(
+            "last_check_status IS NULL OR last_check_status IN ('ok', 'failed', 'page_gone')", name="check_status"
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     component_id: Mapped[int] = mapped_column(ForeignKey("components.id", ondelete="CASCADE"), index=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="RESTRICT"), index=True)
     price_mdl: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    # The store's crossed-out price while the product is on sale; NULL when not on sale.
+    regular_price_mdl: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     availability: Mapped[Availability] = mapped_column(pg_enum(Availability, "offer_availability"))
     # Stores rarely publish exact stock; NULL means unknown.
     stock_qty: Mapped[int | None]
     url: Mapped[str] = mapped_column(Text)
-    checked_on: Mapped[date] = mapped_column(Date)  # when a person last verified this price
+    checked_on: Mapped[date] = mapped_column(Date)  # when this price was last confirmed (by hand or by the checker)
+    # Result of the last `scripts.check_offers` run for this offer; NULL if never checked.
+    # On 'failed' or 'page_gone' the price and availability above are left unchanged.
+    last_check_status: Mapped[str | None] = mapped_column(String(9))
 
     component: Mapped[Component] = relationship(back_populates="offers")
     store: Mapped[Store] = relationship(back_populates="offers")

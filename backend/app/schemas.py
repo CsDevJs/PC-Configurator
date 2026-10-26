@@ -2,8 +2,9 @@
 
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from app.db.models import Availability, Category, Tier
 
@@ -23,10 +24,18 @@ class OfferRead(ReadModel):
     id: int
     store: StoreRead
     price_mdl: Decimal
+    regular_price_mdl: Decimal | None = Field(description="Store's crossed-out price while on sale; null otherwise")
     availability: Availability
     stock_qty: int | None
     url: str
     checked_on: date
+    last_check_status: Literal["ok", "failed", "page_gone"] | None = Field(
+        description="Result of the last automatic check; null if never checked")
+
+    @computed_field
+    @property
+    def on_sale(self) -> bool:
+        return self.regular_price_mdl is not None
 
 
 class ComponentRead(ReadModel):

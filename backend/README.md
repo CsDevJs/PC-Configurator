@@ -84,9 +84,11 @@ availability, product URL, and `checked_on` date. Decimal values such as `price_
 are JSON strings (e.g. `"2499.00"`) to preserve precision. Unknown stock quantities
 are `null`, rather than zero.
 
-Data comes exclusively from PostgreSQL. There are no store API calls, scraping,
-or automatic updates. Continue editing and rerunning `seed/seed.sql` to maintain
-the catalog. Catalog editing endpoints are not yet implemented.
+The API reads only from PostgreSQL; it never contacts the stores itself. Parts
+and specs are maintained in `seed/seed.sql`; prices, sales and stock can be
+refreshed from the store websites on demand with `scripts.check_offers` (below).
+There are no automatic or scheduled updates. Catalog editing endpoints are not
+yet implemented.
 
 ## Accounts and saved builds
 
@@ -141,6 +143,40 @@ source ──1──▶ part ──1, price──▶ store ──▶ sink
 
 `tests/test_purchase.py` checks the solver against brute force on 300 random
 graphs, and the planner on 500 random purchase cases.
+
+## Updating prices, sales and stock from the stores
+
+Run this whenever you want fresh data (nothing runs automatically):
+
+```bash
+.venv/bin/python -m scripts.check_offers      # Windows: .venv\Scripts\python -m scripts.check_offers
+```
+
+It opens every offer's product page (171 pages take about 2 minutes) and updates
+`price_mdl`, `regular_price_mdl` (the crossed-out price during a sale, otherwise
+null), `availability` and `checked_on`, then prints what changed:
+
+```
+  changed Xstore       intel-core-i5-14400f: price 3709.00 -> 3659.00, on sale (regular 3879.00)
+Done: 171 ok (82 changed), 0 failed, 0 page gone.
+```
+
+- **Where the data comes from:** all four stores embed schema.org Product data
+  (current price and availability) in their pages. The sale's regular price is
+  read from the crossed-out price in each store's price block
+  (`app/services/store_pages.py`).
+- **Being polite:** the script follows each store's robots.txt, waits 2 seconds
+  between requests to the same store, and names the project in its User-Agent.
+- **Failures never erase data:** if a page can't be read, the offer keeps its
+  previous values and `last_check_status` becomes `failed` (`page_gone` for HTTP
+  404/410). The API shows `last_check_status` with each offer.
+- **If a store redesigns its site,** that store's offers start failing.
+  `tests/test_store_pages.py` runs the parsers on trimmed real pages saved in
+  `tests/fixtures/store_pages/`; update the selector and save a fresh page.
+- Xstore and NeoComputer show a crossed-out price on most products, so most of
+  their offers appear as on sale. That is what the stores display.
+
+The API returns `regular_price_mdl`, `on_sale` and `last_check_status` with each offer.
 
 ## Compatibility checks
 
@@ -275,7 +311,10 @@ Load it in either of two ways (after `alembic upgrade head`):
 - open `seed/seed.sql` in pgAdmin's Query Tool, connected to `pc_configurator`, and press F5.
 
 Every `INSERT` ends in `ON CONFLICT … DO UPDATE`, so the file is safe to re-run.
-To change a price or add a part, edit `seed.sql` and run it again.
+To add a part or change specs, edit `seed.sql` and run it again. Offer prices in
+`seed.sql` are only starting values for new offers: re-running it never
+overwrites the price, sale or stock of an existing offer (only its URL), so data
+from `scripts.check_offers` is kept. Use the checker to refresh prices.
 
 ### Where the data came from (2026-10-21)
 

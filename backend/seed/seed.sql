@@ -5,7 +5,10 @@
 --   * from backend/:  .venv\Scripts\python -m scripts.seed
 --   * or paste this whole file into pgAdmin's Query Tool (connected to pc_configurator) and press F5.
 -- Safe to re-run: every row is upserted by its natural key (slug, or component + store for offers).
--- To change a price, edit the row here and run the file again.
+-- Parts and specs: edit the rows here and run the file again.
+-- Prices, sales and stock: the prices below are only the starting values for NEW offers.
+-- For offers that already exist, `python -m scripts.check_offers` keeps them up to date,
+-- and re-running this file does not overwrite them (it only updates the URL).
 
 BEGIN;
 
@@ -468,10 +471,10 @@ INSERT INTO offers (component_id, store_id, price_mdl, availability, url, checke
     ((SELECT id FROM components WHERE slug = 'deepcool-le360-pro-black'), (SELECT id FROM stores WHERE slug = 'neocomputer'), 1543, 'in_stock', 'https://neocomputer.md/cooler-procesor-deepcool-le360-pro-black', DATE '2026-10-21'),
     ((SELECT id FROM components WHERE slug = 'deepcool-le360-pro-black'), (SELECT id FROM stores WHERE slug = 'darwin'), 1639, 'in_stock', 'https://darwin.md/cooler-cu-lichid-deepcool-le360-pro-hydro-bearing-2400-rotmin-black-rgb.html', DATE '2026-10-21'),
     ((SELECT id FROM components WHERE slug = 'arctic-liquid-freezer-iii-pro-360'), (SELECT id FROM stores WHERE slug = 'xstore'), 3119, 'in_stock', 'https://xstore.md/componente-pc/racire/arctic-liquid-freezer-iii-pro-360', DATE '2026-10-21')
+-- Existing offers keep the price, sale and stock found by scripts.check_offers.
+-- A changed URL is saved and marked as not yet checked.
 ON CONFLICT (component_id, store_id) DO UPDATE SET
-    price_mdl = EXCLUDED.price_mdl,
-    availability = EXCLUDED.availability,
     url = EXCLUDED.url,
-    checked_on = EXCLUDED.checked_on;
+    last_check_status = CASE WHEN offers.url = EXCLUDED.url THEN offers.last_check_status END;
 
 COMMIT;
