@@ -260,17 +260,78 @@ class Offer(Base):
         UniqueConstraint("component_id", "store_id"),
         CheckConstraint("price_mdl > 0", name="price_positive"),
         CheckConstraint("stock_qty IS NULL OR stock_qty >= 0", name="stock_nonneg"),
+        CheckConstraint("regular_price_mdl IS NULL OR regular_price_mdl > price_mdl", name="regular_above_price"),
+        CheckConstraint(
+            "last_check_status IS NULL OR last_check_status IN ('ok', 'failed', 'page_gone')", name="check_status"
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     component_id: Mapped[int] = mapped_column(ForeignKey("components.id", ondelete="CASCADE"), index=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="RESTRICT"), index=True)
     price_mdl: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    # The store's crossed-out price while the product is on sale; NULL when not on sale.
+    regular_price_mdl: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     availability: Mapped[Availability] = mapped_column(pg_enum(Availability, "offer_availability"))
     # Stores rarely publish exact stock; NULL means unknown.
     stock_qty: Mapped[int | None]
     url: Mapped[str] = mapped_column(Text)
-    checked_on: Mapped[date] = mapped_column(Date)  # when a person last verified this price
+    checked_on: Mapped[date] = mapped_column(Date)  # when this price was last confirmed (by hand or by the checker)
+    # Result of the last `scripts.check_offers` run for this offer; NULL if never checked.
+    # On 'failed' or 'page_gone' the price and availability above are left unchanged.
+    last_check_status: Mapped[str | None] = mapped_column(String(9))
 
     component: Mapped[Component] = relationship(back_populates="offers")
     store: Mapped[Store] = relationship(back_populates="offers")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Stored lowercased so "A@x.md" and "a@x.md" are the same account.
+    email: Mapped[str] = mapped_column(String(254), unique=True)
+    password_hash: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    builds: Mapped[list["Build"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+
+class Build(Base):
+    """A configuration a user saved. Holds at most one component per category."""
+
+    __tablename__ = "builds"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped[User] = relationship(back_populates="builds")
+    items: Mapped[list["BuildItem"]] = relationship(
+        back_populates="build", cascade="all, delete-orphan", order_by="BuildItem.category"
+    )
+
+
+class BuildItem(Base):
+    """One selected component, with the cheapest in-stock offer at the time it was added.
+
+    The saved price lets a user see how prices moved since they saved the build.
+    It is NULL when no store had the component in stock at that moment.
+    """
+
+    __tablename__ = "build_items"
+
+    build_id: Mapped[int] = mapped_column(ForeignKey("builds.id", ondelete="CASCADE"), primary_key=True)
+    category: Mapped[Category] = mapped_column(pg_enum(Category, "component_category"), primary_key=True)
+    # RESTRICT: a component that appears in saved builds cannot be deleted from the catalog.
+    component_id: Mapped[int] = mapped_column(ForeignKey("components.id", ondelete="RESTRICT"), index=True)
+    saved_price_mdl: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    saved_store_id: Mapped[int | None] = mapped_column(ForeignKey("stores.id", ondelete="SET NULL"))
+
+    build: Mapped[Build] = relationship(back_populates="items")
+    component: Mapped[Component] = relationship()
+    saved_store: Mapped[Store | None] = relationship()
