@@ -14,8 +14,14 @@ Python 3.12 or newer is recommended. Run all commands below from `backend/`.
    CREATE DATABASE pc_configurator OWNER pc_app;
    ```
 
-2. Copy `.env.example` to `.env` and put your password in `DATABASE_URL`.
-   `.env` is git-ignored.
+2. Copy `.env.example` to `.env`, put your password in `DATABASE_URL`, and set
+   `JWT_SECRET` to a long random value (it signs login tokens):
+
+   ```bash
+   python -c "import secrets; print(secrets.token_urlsafe(48))"
+   ```
+
+   `.env` is git-ignored. The app refuses to start without `JWT_SECRET`.
 
 3. Install dependencies, create the tables, and load the seed data (Linux/macOS):
 
@@ -49,6 +55,14 @@ Python 3.12 or newer is recommended. Run all commands below from `backend/`.
 | GET | `/components/{component_id}` | A component's specifications and store offers; HTTP 404 if absent |
 | GET | `/stores` | Stores sorted by name |
 | POST | `/compatibility/check` | Check a complete or partial selection without saving it |
+| POST | `/compatibility/filter` | AC-3 filtering of candidate components |
+| POST | `/auth/register` | Create an account; HTTP 409 if the email is taken |
+| POST | `/auth/login` | Get a bearer token; HTTP 401 for a wrong email or password |
+| GET | `/auth/me` | The logged-in user 🔒 |
+| GET / POST | `/builds` | List your saved builds / save a new one 🔒 |
+| GET / PUT / DELETE | `/builds/{build_id}` | Read, replace or delete one of your builds 🔒 |
+
+🔒 = send `Authorization: Bearer <access_token>` from `/auth/login`.
 
 `/components` supports optional `category`, `tier`, and `brand` filters.
 Categories: `cpu`, `motherboard`, `ram`, `gpu`, `storage`, `psu`, `case`, `cooler`.
@@ -71,8 +85,34 @@ are `null`, rather than zero.
 
 Data comes exclusively from PostgreSQL. There are no store API calls, scraping,
 or automatic updates. Continue editing and rerunning `seed/seed.sql` to maintain
-the catalog. Accounts, saved builds, and catalog editing endpoints are not yet
-implemented.
+the catalog. Catalog editing endpoints are not yet implemented.
+
+## Accounts and saved builds
+
+Register and log in with JSON `{"email": "...", "password": "..."}`. Emails are
+stored lowercased; passwords need 8–128 characters and are stored as argon2
+hashes. Login returns `access_token`, `token_type` (`bearer`) and `expires_in`
+(seconds, `ACCESS_TOKEN_MINUTES`, default 24 h). Wrong password and unknown
+email give the same 401, so accounts can't be probed.
+
+Save a build with the same `components` shape as `/compatibility/check`, plus a
+`name` (1–100 characters):
+
+```json
+{"name": "Mid AM5", "components": {"cpu": 3, "motherboard": 9, "ram": 16}}
+```
+
+- Incomplete and incompatible builds can be saved; drafts are allowed.
+- Each part stores the cheapest in-stock price and store at the moment it was
+  added (`saved_price_mdl`, `saved_store`). Reading a build also shows today's
+  cheapest in-stock offer (`current_price_mdl`, `current_store`), the two totals,
+  and `unpriced_categories` for parts no store has in stock.
+- Reading a build recomputes `compatibility` with the current rules, in the same
+  format as `/compatibility/check`.
+- `PUT` replaces the name and the whole selection. Parts kept in the same
+  category keep their saved price; new parts get today's price.
+- A build owned by someone else answers 404, as if it didn't exist.
+- Components used in saved builds can't be deleted from the catalog.
 
 ## Compatibility checks
 

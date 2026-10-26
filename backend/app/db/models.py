@@ -274,3 +274,55 @@ class Offer(Base):
 
     component: Mapped[Component] = relationship(back_populates="offers")
     store: Mapped[Store] = relationship(back_populates="offers")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Stored lowercased so "A@x.md" and "a@x.md" are the same account.
+    email: Mapped[str] = mapped_column(String(254), unique=True)
+    password_hash: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    builds: Mapped[list["Build"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+
+class Build(Base):
+    """A configuration a user saved. Holds at most one component per category."""
+
+    __tablename__ = "builds"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped[User] = relationship(back_populates="builds")
+    items: Mapped[list["BuildItem"]] = relationship(
+        back_populates="build", cascade="all, delete-orphan", order_by="BuildItem.category"
+    )
+
+
+class BuildItem(Base):
+    """One selected component, with the cheapest in-stock offer at the time it was added.
+
+    The saved price lets a user see how prices moved since they saved the build.
+    It is NULL when no store had the component in stock at that moment.
+    """
+
+    __tablename__ = "build_items"
+
+    build_id: Mapped[int] = mapped_column(ForeignKey("builds.id", ondelete="CASCADE"), primary_key=True)
+    category: Mapped[Category] = mapped_column(pg_enum(Category, "component_category"), primary_key=True)
+    # RESTRICT: a component that appears in saved builds cannot be deleted from the catalog.
+    component_id: Mapped[int] = mapped_column(ForeignKey("components.id", ondelete="RESTRICT"), index=True)
+    saved_price_mdl: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    saved_store_id: Mapped[int | None] = mapped_column(ForeignKey("stores.id", ondelete="SET NULL"))
+
+    build: Mapped[Build] = relationship(back_populates="items")
+    component: Mapped[Component] = relationship()
+    saved_store: Mapped[Store | None] = relationship()

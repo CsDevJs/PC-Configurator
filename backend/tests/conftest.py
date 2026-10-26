@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 os.environ.setdefault(
     "DATABASE_URL", "postgresql+psycopg://unused:unused@127.0.0.1:1/unused"
 )
+os.environ.setdefault("JWT_SECRET", "test-only-secret-at-least-32-bytes-long")
 
 from app.db.session import get_db
 from app.main import app

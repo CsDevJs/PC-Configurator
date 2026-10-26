@@ -3,6 +3,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.api.auth import router as auth_router
+from app.api.builds import router as builds_router
 from app.api.catalog import router as catalog_router
 from app.api.compatibility import router as compatibility_router
 from app.db.session import get_db
@@ -11,10 +13,13 @@ from app.schemas import HealthRead
 app = FastAPI(
     title="PC Configurator API",
     version="0.1.0",
-    description="Read the manually maintained component catalog and check PC build compatibility.",
+    description="Read the manually maintained component catalog, check PC build compatibility, "
+                "and save builds to a user account.",
 )
 app.include_router(catalog_router)
 app.include_router(compatibility_router)
+app.include_router(auth_router)
+app.include_router(builds_router)
 
 
 @app.get("/health", response_model=HealthRead, tags=["Health"])
