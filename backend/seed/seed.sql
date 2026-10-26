@@ -78,10 +78,10 @@ ON CONFLICT (slug) DO UPDATE SET
 INSERT INTO motherboard_specs (component_id, socket, chipset, form_factor, memory_type, memory_slots, max_memory_gb, m2_slots, sata_ports, wifi) VALUES
     ((SELECT id FROM components WHERE slug = 'gigabyte-b550m-ds3h-r2'), 'AM4', 'B550', 'Micro-ATX', 'DDR4', 4, 128, 2, 4, false),
     ((SELECT id FROM components WHERE slug = 'gigabyte-b760m-h-ddr4'), 'LGA1700', 'B760', 'Micro-ATX', 'DDR4', 2, 64, 2, 4, false),
-    ((SELECT id FROM components WHERE slug = 'gigabyte-b650m-d3hp'), 'AM5', 'B650', 'Micro-ATX', 'DDR5', 4, 192, 2, 4, false),
+    ((SELECT id FROM components WHERE slug = 'gigabyte-b650m-d3hp'), 'AM5', 'B650', 'Micro-ATX', 'DDR5', 4, 256, 2, 4, false),
     ((SELECT id FROM components WHERE slug = 'asus-tuf-gaming-b760-plus-wifi'), 'LGA1700', 'B760', 'ATX', 'DDR5', 4, 192, 3, 4, true),
     ((SELECT id FROM components WHERE slug = 'gigabyte-x870e-aorus-elite-wifi7'), 'AM5', 'X870E', 'ATX', 'DDR5', 4, 256, 4, 4, true),
-    ((SELECT id FROM components WHERE slug = 'asus-tuf-gaming-z890-plus-wifi'), 'LGA1851', 'Z890', 'ATX', 'DDR5', 4, 192, 4, 4, true)
+    ((SELECT id FROM components WHERE slug = 'asus-tuf-gaming-z890-plus-wifi'), 'LGA1851', 'Z890', 'ATX', 'DDR5', 4, 256, 4, 4, true)
 ON CONFLICT (component_id) DO UPDATE SET
     socket = EXCLUDED.socket,
     chipset = EXCLUDED.chipset,
@@ -151,7 +151,7 @@ INSERT INTO gpu_specs (component_id, chipset, vram_gb, length_mm, slot_width, td
     ((SELECT id FROM components WHERE slug = 'asus-dual-rtx-5060-ti-o16g'), 'GeForce RTX 5060 Ti', 16, 229, 2.5, 180, 550, '1x 8-pin'),
     ((SELECT id FROM components WHERE slug = 'gigabyte-rx-9060-xt-gaming-oc-16g'), 'Radeon RX 9060 XT', 16, 281, 2.0, 160, 450, '1x 8-pin'),
     ((SELECT id FROM components WHERE slug = 'gigabyte-rtx-5070-ti-windforce-oc-16g'), 'GeForce RTX 5070 Ti', 16, 304, 2.5, 300, 750, '1x 16-pin'),
-    ((SELECT id FROM components WHERE slug = 'gigabyte-rx-9070-xt-gaming-oc-16g'), 'Radeon RX 9070 XT', 16, 288, 3.0, 340, 750, '3x 8-pin')
+    ((SELECT id FROM components WHERE slug = 'gigabyte-rx-9070-xt-gaming-oc-16g'), 'Radeon RX 9070 XT', 16, 288, 2.8, 340, 850, '3x 8-pin')
 ON CONFLICT (component_id) DO UPDATE SET
     chipset = EXCLUDED.chipset,
     vram_gb = EXCLUDED.vram_gb,
@@ -215,10 +215,10 @@ ON CONFLICT (slug) DO UPDATE SET
     updated_at = now();
 
 INSERT INTO psu_specs (component_id, wattage, efficiency, modular, form_factor, has_16pin) VALUES
-    ((SELECT id FROM components WHERE slug = 'be-quiet-system-power-11-650w'), 650, '80+ Bronze', 'none', 'ATX', false),
+    ((SELECT id FROM components WHERE slug = 'be-quiet-system-power-11-650w'), 650, '80+ Bronze', 'none', 'ATX', true),
     ((SELECT id FROM components WHERE slug = 'cougar-atlas-750'), 750, '80+ Bronze', 'none', 'ATX', false),
-    ((SELECT id FROM components WHERE slug = 'cougar-gex-pro-750'), 750, '80+ Gold', 'full', 'ATX', false),
-    ((SELECT id FROM components WHERE slug = 'cougar-gex-pro-850'), 850, '80+ Gold', 'full', 'ATX', false),
+    ((SELECT id FROM components WHERE slug = 'cougar-gex-pro-750'), 750, '80+ Gold', 'full', 'ATX', true),
+    ((SELECT id FROM components WHERE slug = 'cougar-gex-pro-850'), 850, '80+ Gold', 'full', 'ATX', true),
     ((SELECT id FROM components WHERE slug = 'asus-rog-strix-850w-platinum'), 850, '80+ Platinum', 'full', 'ATX', true),
     ((SELECT id FROM components WHERE slug = 'be-quiet-pure-power-13-m-1000w'), 1000, '80+ Gold', 'full', 'ATX', true)
 ON CONFLICT (component_id) DO UPDATE SET
@@ -248,12 +248,12 @@ ON CONFLICT (slug) DO UPDATE SET
     updated_at = now();
 
 INSERT INTO case_specs (component_id, supported_board_form_factors, max_gpu_length_mm, max_cooler_height_mm, max_radiator_mm, psu_form_factor, included_fans) VALUES
-    ((SELECT id FROM components WHERE slug = 'deepcool-cc560-v2-black'), ARRAY['ATX', 'Micro-ATX', 'Mini-ITX'], 370, 163, 360, 'ATX', 4),
-    ((SELECT id FROM components WHERE slug = 'deepcool-ch360-white'), ARRAY['Micro-ATX', 'Mini-ITX'], 320, 165, 360, 'ATX', 3),
-    ((SELECT id FROM components WHERE slug = 'deepcool-ch560-black'), ARRAY['E-ATX', 'ATX', 'Micro-ATX', 'Mini-ITX'], 380, 170, 360, 'ATX', 4),
+    ((SELECT id FROM components WHERE slug = 'deepcool-cc560-v2-black'), ARRAY['ATX', 'Micro-ATX', 'Mini-ITX'], 370, 165, 360, 'ATX', 4),
+    ((SELECT id FROM components WHERE slug = 'deepcool-ch360-white'), ARRAY['Micro-ATX', 'Mini-ITX'], 378, 165, 360, 'ATX', 3),
+    ((SELECT id FROM components WHERE slug = 'deepcool-ch560-black'), ARRAY['E-ATX', 'ATX', 'Micro-ATX', 'Mini-ITX'], 380, 175, 360, 'ATX', 4),
     ((SELECT id FROM components WHERE slug = 'be-quiet-pure-base-501-lx-white'), ARRAY['ATX', 'Micro-ATX', 'Mini-ITX'], 368, 178, 360, 'ATX', 4),
-    ((SELECT id FROM components WHERE slug = 'be-quiet-light-base-600-lx-white'), ARRAY['E-ATX', 'ATX', 'Micro-ATX', 'Mini-ITX'], 400, 170, 360, 'ATX', 4),
-    ((SELECT id FROM components WHERE slug = 'be-quiet-shadow-base-800-fx-white'), ARRAY['E-ATX', 'ATX', 'Micro-ATX', 'Mini-ITX'], 430, 165, 420, 'ATX', 4)
+    ((SELECT id FROM components WHERE slug = 'be-quiet-light-base-600-lx-white'), ARRAY['ATX', 'Micro-ATX', 'Mini-ITX'], 400, 170, 360, 'ATX', 4),
+    ((SELECT id FROM components WHERE slug = 'be-quiet-shadow-base-800-fx-white'), ARRAY['E-ATX', 'ATX', 'Micro-ATX', 'Mini-ITX'], 430, 180, 420, 'ATX', 4)
 ON CONFLICT (component_id) DO UPDATE SET
     supported_board_form_factors = EXCLUDED.supported_board_form_factors,
     max_gpu_length_mm = EXCLUDED.max_gpu_length_mm,

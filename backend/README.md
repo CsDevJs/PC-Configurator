@@ -287,8 +287,14 @@ To change a price or add a part, edit `seed.sql` and run it again.
   added to the cart.
 - **NeoComputer RAM**: listings don't show Kingston part numbers. They were
   matched by capacity, speed and series.
-- **Specs** come from the store spec tables, corrected with manufacturer specs
-  where the store was clearly wrong.
+- **Specs used by compatibility checks** (GPU length/PSU recommendation,
+  motherboard memory/M.2/SATA/form factor, cooler height/radiator/sockets,
+  case GPU/cooler/radiator limits and board sizes, PSU connectors) were checked
+  against the manufacturers' own spec pages (Gigabyte, ASUS, DeepCool, be quiet!)
+  on 2026-10-22. Exceptions: the Cougar GEX PRO 16-pin connector is from retailer
+  listings, and the Cougar Atlas 750 and ARCTIC Liquid Freezer III Pro 360 were not
+  re-checked. DeepCool CH360: GPUs up to 378 mm fit, but only 320 mm with a
+  front-mounted radiator; the schema stores one limit, so 378 is used.
 - **`perf_score` values are rough estimates** (`perf_source` says so), only for
   CPUs and GPUs. Replace them with sourced benchmark numbers before the evaluation chapter.
 
