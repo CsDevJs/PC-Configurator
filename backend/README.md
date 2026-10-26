@@ -61,6 +61,7 @@ Python 3.12 or newer is recommended. Run all commands below from `backend/`.
 | GET | `/auth/me` | The logged-in user 🔒 |
 | GET / POST | `/builds` | List your saved builds / save a new one 🔒 |
 | GET / PUT / DELETE | `/builds/{build_id}` | Read, replace or delete one of your builds 🔒 |
+| POST | `/purchase/plan` | Which store to buy each part from, at the lowest total (Min-Cost Max-Flow) |
 
 🔒 = send `Authorization: Bearer <access_token>` from `/auth/login`.
 
@@ -113,6 +114,33 @@ Save a build with the same `components` shape as `/compatibility/check`, plus a
   category keep their saved price; new parts get today's price.
 - A build owned by someone else answers 404, as if it didn't exist.
 - Components used in saved builds can't be deleted from the catalog.
+
+## Purchase planning (Min-Cost Max-Flow)
+
+`POST /purchase/plan` takes the same `components` shape as `/compatibility/check`
+and picks a store for each part:
+
+```json
+{"components": {"cpu": 3, "gpu": 22, "ram": 16}}
+```
+
+The solver (`app/services/mcmf.py`) is a general Min-Cost Max-Flow using
+successive shortest paths, with Bellman-Ford finding each cheapest path.
+`app/services/purchase.py` builds this network, one unit of flow per part:
+
+```
+source ──1──▶ part ──1, price──▶ store ──▶ sink
+```
+
+- **Max flow** = how many parts can be bought. A part with no in-stock offer is
+  listed in `unplanned`, and `status` is `partial`.
+- **Min cost** = the cheapest way to buy them. Prices are converted to bani
+  (integers), so totals are exact. Equal prices go to the lower store ID.
+- Only `in_stock` offers are used. Stock quantities and delivery fees are not
+  modeled (a team decision: the site gives fast price information).
+
+`tests/test_purchase.py` checks the solver against brute force on 300 random
+graphs, and the planner on 500 random purchase cases.
 
 ## Compatibility checks
 
